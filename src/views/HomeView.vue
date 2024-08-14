@@ -1,7 +1,6 @@
 <script setup>
-import router from '@/router'
 import { useAuthStore } from '../stores/auth'
-
+import router from '@/router'
 const authStore = useAuthStore()
 
 const logout = () => {
