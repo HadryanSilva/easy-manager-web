@@ -25,28 +25,37 @@ const register = async () => {
 </script>
 
 <template>
-  <div class="register-container">
-    <form @submit.prevent="register">
-      <h1>Crie sua conta</h1>
-      <FloatLabel>
-        <InputText class="input" id="username" v-model="username" />
-        <label for="username">Username</label>
-      </FloatLabel>
-      <FloatLabel>
-        <InputText type="password" class="input" id="password" v-model="password" />
-        <label for="password">Password</label>
-      </FloatLabel>
-      <FloatLabel>
-        <InputText type="email" class="input" id="email" v-model="email" />
-        <label for="email">Email</label>
-      </FloatLabel>
-      <Button type="submit" label="Registrar-se" />
-      <router-link to="/login"><span>Já tem uma conta? Login</span></router-link>
-    </form>
-  </div>
+  <main>
+    <div class="register-container">
+      <form @submit.prevent="register">
+        <h1>Crie sua conta</h1>
+        <FloatLabel>
+          <InputText class="input" id="username" v-model="username" />
+          <label for="username">Username</label>
+        </FloatLabel>
+        <FloatLabel>
+          <InputText type="password" class="input" id="password" v-model="password" />
+          <label for="password">Password</label>
+        </FloatLabel>
+        <FloatLabel>
+          <InputText type="email" class="input" id="email" v-model="email" />
+          <label for="email">Email</label>
+        </FloatLabel>
+        <Button type="submit" label="Registrar-se" />
+        <router-link to="/login"><span>Já tem uma conta? Login</span></router-link>
+      </form>
+    </div>
+  </main>
 </template>
 
 <style scoped>
+main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
 .register-container {
   display: flex;
   align-items: center;
