@@ -10,9 +10,12 @@ const logout = () => {
 </script>
 
 <template>
-  <div>
+  <div v-if="authStore.isAuthenticated">
     <h1>Home</h1>
     <p>Welcome to the Home page</p>
     <button @click="logout">Logout</button>
+  </div>
+  <div v-else>
+    {{ router.push('/login') }}
   </div>
 </template>
