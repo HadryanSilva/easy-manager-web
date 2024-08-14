@@ -36,11 +36,17 @@ const login = async () => {
       <form @submit.prevent="login">
         <h1>Acesse sua conta</h1>
         <FloatLabel>
-          <InputText class="input" id="username" v-model="username" />
+          <InputText :required="true" :class="input" id="username" v-model="username" />
           <label for="username">Username</label>
         </FloatLabel>
         <FloatLabel>
-          <InputText type="password" class="input" id="password" v-model="password" />
+          <InputText
+            :required="true"
+            :type="password"
+            :class="input"
+            :id="password"
+            v-model="password"
+          />
           <label for="password">Password</label>
         </FloatLabel>
         <Button type="submit" label="Login" />
