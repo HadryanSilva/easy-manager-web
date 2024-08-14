@@ -23,24 +23,33 @@ const login = async () => {
 </script>
 
 <template>
-  <div class="login-container">
-    <form @submit.prevent="login">
-      <h1>Acesse sua conta</h1>
-      <div class="input-group">
-        <input required="" type="text" name="text" class="input" v-model="username" />
-        <label class="user-label">Username or Email</label>
-      </div>
-      <div class="input-group">
-        <input required="" type="password" name="text" class="input" v-model="password" />
-        <label class="password-label">Password</label>
-      </div>
-      <button class="button-style">Login</button>
-      <router-link to="/register"><span>Não tem uma conta? Cadastre-se</span></router-link>
-    </form>
-  </div>
+  <main>
+    <div class="login-container">
+      <form @submit.prevent="login">
+        <h1>Acesse sua conta</h1>
+        <FloatLabel>
+          <InputText class="input" id="username" v-model="username" />
+          <label for="username">Username</label>
+        </FloatLabel>
+        <FloatLabel>
+          <InputText type="password" class="input" id="password" v-model="password" />
+          <label for="password">Password</label>
+        </FloatLabel>
+        <Button type="submit" label="Login" />
+        <router-link to="/register"><span>Não tem uma conta? Cadastre-se</span></router-link>
+      </form>
+    </div>
+  </main>
 </template>
 
 <style scoped>
+main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
 .login-container {
   display: flex;
   align-items: center;
@@ -48,7 +57,7 @@ const login = async () => {
   border-radius: 0.5rem;
   width: 600px;
   margin: auto;
-  box-shadow: 0px 0px 14px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 0px 14px 10px rgba(125, 118, 118, 0.1);
 }
 
 form {
@@ -57,53 +66,7 @@ form {
   justify-content: center;
   align-items: center;
   height: 85vh;
-  gap: 1rem;
-}
-
-.input-group {
-  position: relative;
-}
-
-.input {
-  border: solid 1.5px #9e9e9e;
-  border-radius: 1rem;
-  background: none;
-  padding: 1rem;
-  font-size: 1rem;
-  color: #1a1717;
-  transition: border 150ms cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.user-label {
-  position: absolute;
-  left: 15px;
-  color: #e8e8e8;
-  pointer-events: none;
-  transform: translateY(1rem);
-  transition: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.password-label {
-  position: absolute;
-  left: 15px;
-  color: #e8e8e8;
-  pointer-events: none;
-  transform: translateY(1rem);
-  transition: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.input:focus,
-input:valid {
-  outline: none;
-  border: 1.5px solid #253852;
-}
-
-.input:focus ~ label,
-input:valid ~ label {
-  transform: translateY(-50%) scale(0.8);
-  background-color: #f7f2f2;
-  padding: 0 0.2em;
-  color: #000000;
+  gap: 2rem;
 }
 
 button {
@@ -150,7 +113,7 @@ button {
 a {
   font-size: small;
   cursor: pointer;
-  color: #0d0d0d;
+  color: #b5e4a6;
   text-decoration: none;
 }
 

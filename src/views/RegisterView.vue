@@ -28,19 +28,19 @@ const register = async () => {
   <div class="register-container">
     <form @submit.prevent="register">
       <h1>Crie sua conta</h1>
-      <div class="input-group">
-        <input required="" type="text" name="text" class="input" v-model="username" />
-        <label class="user-label">Username</label>
-      </div>
-      <div class="input-group">
-        <input required="" type="password" name="text" class="input" v-model="password" />
-        <label class="password-label">Password</label>
-      </div>
-      <div class="input-group">
-        <input required="" type="email" name="text" class="input" v-model="email" />
-        <label class="email-label">Email</label>
-      </div>
-      <button class="button-style">Registrar</button>
+      <FloatLabel>
+        <InputText class="input" id="username" v-model="username" />
+        <label for="username">Username</label>
+      </FloatLabel>
+      <FloatLabel>
+        <InputText type="password" class="input" id="password" v-model="password" />
+        <label for="password">Password</label>
+      </FloatLabel>
+      <FloatLabel>
+        <InputText class="input" id="email" v-model="email" />
+        <label for="email">Email</label>
+      </FloatLabel>
+      <Button type="submit" label="Registrar-se" />
       <router-link to="/login"><span>Já tem uma conta? Login</span></router-link>
     </form>
   </div>
@@ -63,103 +63,7 @@ form {
   justify-content: center;
   align-items: center;
   height: 85vh;
-  gap: 1rem;
-}
-
-.input-group {
-  position: relative;
-}
-
-.input {
-  border: solid 1.5px #9e9e9e;
-  border-radius: 1rem;
-  background: none;
-  padding: 1rem;
-  font-size: 1rem;
-  color: #1a1717;
-  transition: border 150ms cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.user-label {
-  position: absolute;
-  left: 15px;
-  color: #e8e8e8;
-  pointer-events: none;
-  transform: translateY(1rem);
-  transition: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.password-label {
-  position: absolute;
-  left: 15px;
-  color: #e8e8e8;
-  pointer-events: none;
-  transform: translateY(1rem);
-  transition: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.email-label {
-  position: absolute;
-  left: 15px;
-  color: #e8e8e8;
-  pointer-events: none;
-  transform: translateY(1rem);
-  transition: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.input:focus,
-input:valid {
-  outline: none;
-  border: 1.5px solid #253852;
-}
-
-.input:focus ~ label,
-input:valid ~ label {
-  transform: translateY(-50%) scale(0.8);
-  background-color: #f7f2f2;
-  padding: 0 0.2em;
-  color: #000000;
-}
-
-button {
-  cursor: pointer;
-  margin-top: 1rem;
-}
-
-.button-style {
-  padding: 15px 30px;
-  border: 2px solid #2c2c2c;
-  background-color: #1a1a1a;
-  color: #ffffff;
-  font-size: 1.2rem;
-  cursor: pointer;
-  border-radius: 30px;
-  transition: all 0.4s ease;
-  outline: none;
-  position: relative;
-  overflow: hidden;
-  font-weight: bold;
-}
-
-.button-style::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 70%);
-  transform: scale(0);
-  transition: transform 0.5s ease;
-}
-
-.button-style:hover::after {
-  transform: scale(4);
-}
-
-.button-style:hover {
-  border-color: #666666;
-  background: #292929;
+  gap: 2rem;
 }
 
 a {
