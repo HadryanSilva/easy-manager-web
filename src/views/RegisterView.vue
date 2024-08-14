@@ -37,7 +37,7 @@ const register = async () => {
         <label for="password">Password</label>
       </FloatLabel>
       <FloatLabel>
-        <InputText class="input" id="email" v-model="email" />
+        <InputText type="email" class="input" id="email" v-model="email" />
         <label for="email">Email</label>
       </FloatLabel>
       <Button type="submit" label="Registrar-se" />
