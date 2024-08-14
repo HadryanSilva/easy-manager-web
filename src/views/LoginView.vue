@@ -2,7 +2,9 @@
 import router from '@/router'
 import { useAuthStore } from '../stores/auth'
 import { ref } from 'vue'
+import { useToast } from 'primevue/usetoast'
 
+const toast = useToast()
 const username = ref('')
 const password = ref('')
 const authStore = useAuthStore()
@@ -17,7 +19,13 @@ const login = async () => {
   if (success) {
     router.push('/')
   } else {
-    // Mostrar mensagem de erro
+    toast.add({
+      severity: 'error',
+      summary: 'Erro no Login',
+      detail: 'Verifique suas credenciais',
+      closable: false,
+      life: 5000
+    })
   }
 }
 </script>

@@ -2,7 +2,9 @@
 import router from '@/router'
 import { useAuthStore } from '../stores/auth'
 import { ref } from 'vue'
+import { useToast } from 'primevue/usetoast'
 
+const toast = useToast()
 const username = ref('')
 const password = ref('')
 const email = ref('')
@@ -19,7 +21,14 @@ const register = async () => {
   if (success) {
     router.push('/login')
   } else {
-    // Mostrar mensagem de erro
+    toast.add({
+      severity: 'error',
+      summary: 'Erro ao Registrar',
+      detail: 'Verifique os dados informados',
+      closable: false,
+      life: 5000
+    })
+    return false
   }
 }
 </script>
@@ -78,7 +87,7 @@ form {
 a {
   font-size: small;
   cursor: pointer;
-  color: #0d0d0d;
+  color: #b5e4a6;
   text-decoration: none;
 }
 
