@@ -34,7 +34,7 @@ const items = ref([
     command: () => router.push('/users')
   },
   {
-    label: authStore.getUser.username || '',
+    label: authStore?.getUser?.username,
     icon: 'pi pi-user',
     items: [
       {
