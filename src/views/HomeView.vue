@@ -1,6 +1,9 @@
 <script setup>
+import Menubar from 'primevue/menubar'
 import { useAuthStore } from '../stores/auth'
 import router from '@/router'
+import { ref } from 'vue'
+import { RouterView } from 'vue-router'
 
 const authStore = useAuthStore()
 
@@ -8,20 +11,59 @@ const logout = () => {
   authStore.logout()
   router.push('/login')
 }
+
+const items = ref([
+  {
+    label: 'Dashboard',
+    icon: 'pi pi-chart-bar',
+    command: () => router.push('/dashboard')
+  },
+  {
+    label: 'Estoque',
+    icon: 'pi pi-warehouse',
+    command: () => router.push('/stock')
+  },
+  {
+    label: 'Produto',
+    icon: 'pi pi-tags',
+    command: () => router.push('/product')
+  },
+  {
+    label: 'Usuários',
+    icon: 'pi pi-users',
+    command: () => router.push('/users')
+  },
+  {
+    label: authStore.user,
+    icon: 'pi pi-user',
+    items: [
+      {
+        label: 'Perfil',
+        icon: 'pi pi-user-edit'
+      },
+      {
+        label: 'Configurações',
+        icon: 'pi pi-cog'
+      },
+      {
+        label: 'Sair',
+        icon: 'pi pi-sign-out',
+        command: logout
+      }
+    ]
+  }
+])
 </script>
 
 <template>
-  <div v-if="authStore.isAuthenticated">
+  <div class="main-container" v-if="authStore.isAuthenticated">
     <nav>
-      <h1>Home</h1>
-      <div>
-        <p>{{ authStore.user }}</p>
-      </div>
+      <h1>Easy Manager</h1>
+      <Menubar :model="items" />
     </nav>
     <main>
-      <h1>Welcome to the Home page</h1>
+      <RouterView />
     </main>
-    <button @click="logout">Logout</button>
   </div>
   <div v-else>
     {{ router.push('/login') }}
@@ -29,6 +71,19 @@ const logout = () => {
 </template>
 
 <style scoped>
+.main-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 75vh;
+  width: 100%;
+}
+
 nav {
   display: flex;
   justify-content: space-between;
@@ -37,26 +92,6 @@ nav {
   width: 100%;
   height: 15vh;
   margin: 0 auto;
-  padding: 0 2rem;
-}
-
-.profile-select {
-  padding: 0.5rem;
-  width: 200px;
-  cursor: pointer;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  gap: 0.5rem;
-  border: 1px solid #000;
-  border-radius: 8px;
-}
-
-main {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 65vh;
+  padding: 0 5rem;
 }
 </style>

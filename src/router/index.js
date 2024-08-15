@@ -17,7 +17,29 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView
+      component: HomeView,
+      children: [
+        {
+          path: '/dashboard',
+          name: 'dashboard',
+          component: () => import('../views/DashboardView.vue')
+        },
+        {
+          path: 'stock',
+          name: 'stock',
+          component: () => import('../views/StockView.vue')
+        },
+        {
+          path: 'product',
+          name: 'product',
+          component: () => import('../views/ProductView.vue')
+        },
+        {
+          path: '/users',
+          name: 'users',
+          component: () => import('../views/ManageUsersView.vue')
+        }
+      ]
     },
     {
       path: '/:pathMatch(.*)*',
