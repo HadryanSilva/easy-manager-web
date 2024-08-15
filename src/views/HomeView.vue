@@ -39,7 +39,8 @@ const items = ref([
     items: [
       {
         label: 'Perfil',
-        icon: 'pi pi-user-edit'
+        icon: 'pi pi-user-edit',
+        command: () => router.push('/profile')
       },
       {
         label: 'Configurações',
