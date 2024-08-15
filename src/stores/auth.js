@@ -2,11 +2,20 @@ import { defineStore } from 'pinia'
 import http from '@/services/http'
 
 export const useAuthStore = defineStore('auth', {
-  state: () => ({
-    user: null,
-    token: null,
-    isAuthenticated: false
-  }),
+  state: () => {
+    if (!localStorage.getItem('token')) {
+      return {
+        user: null,
+        token: null,
+        isAuthenticated: false
+      }
+    }
+    return {
+      user: JSON.parse(localStorage.getItem('user')),
+      token: localStorage.getItem('token'),
+      isAuthenticated: true
+    }
+  },
 
   getters: {
     getUser: (state) => state.user,
@@ -31,6 +40,7 @@ export const useAuthStore = defineStore('auth', {
         this.user = auth.username
         this.token = response.data.token
         this.isAuthenticated = true
+        localStorage.setItem('user', JSON.stringify(this.user))
         localStorage.setItem('token', this.token)
         return true
       } catch (error) {
@@ -60,18 +70,16 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async checkAuth() {
-      const token = localStorage.getItem('token')
-      if (token) {
-        try {
-          const response = await http.get('/user', {
-            headers: { Authorization: `Bearer ${token}` }
-          })
-          this.user = response.data
-          this.token = token
-          this.isAuthenticated = true
-        } catch (error) {
-          this.logout()
+      try {
+        const token = localStorage.getItem('token')
+        if (!token) {
+          throw new Error('No token found')
         }
+        this.user = JSON.parse(localStorage.getItem('user'))
+        this.token = token
+        this.isAuthenticated = true
+      } catch (error) {
+        this.logout()
       }
     }
   }

@@ -15,9 +15,6 @@ const app = createApp(App)
 
 app.use(createPinia())
 
-const authStore = useAuthStore()
-authStore.checkAuth()
-
 app.use(PrimeVue, {
   theme: {
     preset: Aura,
@@ -28,6 +25,10 @@ app.use(PrimeVue, {
     }
   }
 })
+
+const authStore = useAuthStore()
+authStore.checkAuth()
+
 app.use(ToastService)
 app.use(router)
 app.mount('#app')

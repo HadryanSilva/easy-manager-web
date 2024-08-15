@@ -17,7 +17,7 @@ const login = async () => {
   console.log(auth)
   const success = await authStore.login(auth)
   if (success) {
-    router.push('/')
+    router.push('/dashboard')
   } else {
     toast.add({
       severity: 'error',

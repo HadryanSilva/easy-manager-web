@@ -34,7 +34,7 @@ const items = ref([
     command: () => router.push('/users')
   },
   {
-    label: authStore.user,
+    label: authStore.getUser,
     icon: 'pi pi-user',
     items: [
       {
@@ -58,7 +58,9 @@ const items = ref([
 <template>
   <div class="main-container" v-if="authStore.isAuthenticated">
     <nav>
-      <h1>Easy Manager</h1>
+      <div class="logo">
+        <h1>Easy Manager</h1>
+      </div>
       <Menubar :model="items" />
     </nav>
     <main>
@@ -71,6 +73,17 @@ const items = ref([
 </template>
 
 <style scoped>
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  border: 2px solid #2c2c2c;
+  border-radius: 5px;
+  font-weight: bold;
+  padding: 15px;
+  color: #fff;
+}
 .main-container {
   display: flex;
   flex-direction: column;
