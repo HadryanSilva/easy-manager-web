@@ -8,9 +8,11 @@ const toast = useToast()
 const username = ref('')
 const password = ref('')
 const email = ref('')
+const loading = ref(false)
 const authStore = useAuthStore()
 
 const register = async () => {
+  loading.value = true
   const userData = {
     username: username.value,
     password: password.value,
@@ -30,6 +32,7 @@ const register = async () => {
     })
     return false
   }
+  loading.value = false
 }
 </script>
 
@@ -50,7 +53,7 @@ const register = async () => {
           <InputText type="email" class="input" id="email" v-model="email" />
           <label for="email">Email</label>
         </FloatLabel>
-        <Button type="submit" label="Registrar-se" />
+        <Button type="submit" label="Registrar-se" :loading="loading" />
         <router-link to="/login"><span>Já tem uma conta? Login</span></router-link>
       </form>
     </div>

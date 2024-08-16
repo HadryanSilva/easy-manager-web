@@ -7,9 +7,11 @@ import { useToast } from 'primevue/usetoast'
 const toast = useToast()
 const username = ref('')
 const password = ref('')
+const loading = ref(false)
 const authStore = useAuthStore()
 
 const login = async () => {
+  loading.value = true
   const auth = {
     username: username.value,
     password: password.value
@@ -27,6 +29,7 @@ const login = async () => {
       life: 5000
     })
   }
+  loading.value = false
 }
 </script>
 
@@ -49,7 +52,7 @@ const login = async () => {
           />
           <label for="password">Password</label>
         </FloatLabel>
-        <Button type="submit" label="Login" />
+        <Button type="submit" label="Login" :loading="loading" />
         <router-link to="/register"><span>Não tem uma conta? Cadastre-se</span></router-link>
       </form>
     </div>

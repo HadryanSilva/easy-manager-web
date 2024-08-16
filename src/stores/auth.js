@@ -51,13 +51,36 @@ export const useAuthStore = defineStore('auth', {
 
     async register(userData) {
       try {
-        const response = await http.post('/auth/register', userData)
-        if (response.status === 201) {
-          console.log('Registration successful:', response.data)
+        const { data, status } = await http.post('/auth/register', userData)
+        if (status === 201) {
+          console.log('Registration successful:', data)
+          this.user = data.user
+          this.email = data.email
         }
         return true
       } catch (error) {
         console.error('Registration failed:', error)
+        return false
+      }
+    },
+
+    async editUser(userData) {
+      const token = this.getToken
+      const config = {
+        headers: { Authorization: `Bearer ${token}` }
+      }
+
+      try {
+        console.log(config)
+        const { data, status } = await http.put(`/users/${this.user.id}`, userData, config)
+        if (status === 200) {
+          console.log('Edit user successful:', data)
+          this.user = data
+          localStorage.setItem('user', JSON.stringify(this.user))
+        }
+        return true
+      } catch (error) {
+        console.log('Edit user failed:', error)
         return false
       }
     },
@@ -67,6 +90,7 @@ export const useAuthStore = defineStore('auth', {
       this.token = null
       this.isAuthenticated = false
       localStorage.removeItem('token')
+      localStorage.removeItem('user')
     },
 
     async checkAuth() {
