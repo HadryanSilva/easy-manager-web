@@ -44,47 +44,49 @@ const editUser = async () => {
 <template>
   <main>
     <div class="profile-container">
-      <div class="fieldset">
-        <label for="username">Username</label>
-        <Inplace>
-          <template #display>
-            {{ authStore.getUser.username || 'Click to Edit' }}
-          </template>
-          <template #content="{ closeCallback }">
-            <span class="inline-flex items-center gap-2">
-              <InputText v-model="username" autofocus />
-              <Button icon="pi pi-times" text severity="danger" @click="closeCallback" />
-            </span>
-          </template>
-        </Inplace>
-      </div>
-      <div class="fieldset">
-        <label for="email">Email</label>
-        <Inplace>
-          <template #display>
-            {{ authStore.getUser.email || 'Click to Edit' }}
-          </template>
-          <template #content="{ closeCallback }">
-            <span class="inline-flex items-center gap-2">
-              <InputText v-model="email" autofocus />
-              <Button icon="pi pi-times" text severity="danger" @click="closeCallback" />
-            </span>
-          </template>
-        </Inplace>
-      </div>
-      <div class="fieldset">
-        <label for="password">Senha</label>
-        <Inplace>
-          <template #display>
-            {{ 'Click to Edit' }}
-          </template>
-          <template #content="{ closeCallback }">
-            <span class="inline-flex items-center gap-2">
-              <InputText type="password" v-model="password" autofocus />
-              <Button icon="pi pi-times" text severity="danger" @click="closeCallback" />
-            </span>
-          </template>
-        </Inplace>
+      <div class="fieldset-container">
+        <div class="fieldset">
+          <label for="username">Username</label>
+          <Inplace>
+            <template #display>
+              {{ authStore.getUser.username || 'Click to Edit' }}
+            </template>
+            <template #content="{ closeCallback }">
+              <span class="inline-flex items-center gap-2">
+                <InputText v-model="username" autofocus />
+                <Button icon="pi pi-times" text severity="danger" @click="closeCallback" />
+              </span>
+            </template>
+          </Inplace>
+        </div>
+        <div class="fieldset">
+          <label for="email">Email</label>
+          <Inplace>
+            <template #display>
+              {{ authStore.getUser.email || 'Click to Edit' }}
+            </template>
+            <template #content="{ closeCallback }">
+              <span class="inline-flex items-center gap-2">
+                <InputText v-model="email" autofocus />
+                <Button icon="pi pi-times" text severity="danger" @click="closeCallback" />
+              </span>
+            </template>
+          </Inplace>
+        </div>
+        <div class="fieldset">
+          <label for="password">Senha</label>
+          <Inplace>
+            <template #display>
+              {{ 'Click to Edit' }}
+            </template>
+            <template #content="{ closeCallback }">
+              <span class="inline-flex items-center gap-2">
+                <InputText type="password" v-model="password" autofocus />
+                <Button icon="pi pi-times" text severity="danger" @click="closeCallback" />
+              </span>
+            </template>
+          </Inplace>
+        </div>
       </div>
       <div class="footer">
         <Button
@@ -110,7 +112,7 @@ main {
 .profile-container {
   width: 50rem;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: 1rem;
   padding: 1rem;
   border: 1px solid #ccc;
@@ -118,11 +120,28 @@ main {
   border-radius: 10px;
 }
 
+.fieldset-container {
+  padding: 3rem 2rem 0 2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
 .fieldset {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1rem;
+  padding: 1rem;
+}
+
+.fieldset label {
+  font-weight: bold;
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
   padding: 1rem;
 }
 </style>
