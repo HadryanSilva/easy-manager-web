@@ -1,13 +1,17 @@
 // userService.js
 
-import http from 'http'
+import http from '@/services/http'
 
 const API_URL = 'http://localhost:8080/api/v1'
+const token = localStorage.getItem('token')
+const config = {
+  headers: { Authorization: `Bearer ${token}` }
+}
 
 export default {
   async getProducts(page, size) {
     try {
-      const response = await http.get(`${API_URL}/products?page=${page}&size=${size}`)
+      const response = await http.get(`${API_URL}/products?page=${page}&size=${size}`, {}, config)
       return response.data
     } catch (error) {
       console.error('Error fetching products:', error)
@@ -17,7 +21,7 @@ export default {
 
   async getProductById(id) {
     try {
-      const response = await http.get(`${API_URL}/products/${id}`)
+      const response = await http.get(`${API_URL}/products/${id}`, {}, config)
       return response.data
     } catch (error) {
       console.error(`Error fetching product with id ${id}:`, error)
@@ -27,7 +31,7 @@ export default {
 
   async createProduct(productData) {
     try {
-      const response = await http.post(`${API_URL}/products`, productData)
+      const response = await http.post(`${API_URL}/products`, productData, config)
       return response.data
     } catch (error) {
       console.error('Error creating product:', error)
@@ -37,7 +41,7 @@ export default {
 
   async editProduct(id, productData) {
     try {
-      const response = await http.put(`${API_URL}/products/${id}`, productData)
+      const response = await http.put(`${API_URL}/products/${id}`, productData, config)
       return response.data
     } catch (error) {
       console.error(`Error editing product with id ${id}:`, error)
@@ -47,7 +51,7 @@ export default {
 
   async deleteProduct(id) {
     try {
-      const response = await http.delete(`${API_URL}/products/${id}`)
+      const response = await http.delete(`${API_URL}/products/${id}`, {}, config)
       return response.data
     } catch (error) {
       console.error(`Error deleting product with id ${id}:`, error)

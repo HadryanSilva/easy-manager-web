@@ -1,88 +1,176 @@
 <script setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
+import { useToast } from 'primevue/usetoast'
 
-const products = ref([])
-const expandedRows = ref([])
-const collapseAll = ref(false)
-const expandAll = ref(false)
+const addVisibleDialog = ref(false)
+const selectedProduct = ref(null)
 
-const onRowExpand = (event) => {
-  expandedRows.value.push(event.data)
+const hasSelectedProducts = computed(() => {
+  return selectedProduct.value && selectedProduct.value.length > 0
+})
+
+const toast = useToast()
+const products = ref([
+  {
+    id: 1,
+    name: 'Product 1',
+    brand: 'Brand 1',
+    price: 100,
+    category: 'Category 1',
+    productStatus: 'Em Estoque'
+  },
+  {
+    id: 2,
+    name: 'Product 2',
+    brand: 'Brand 2',
+    price: 200,
+    category: 'Category 2',
+    productStatus: 'Estoque Baixo'
+  },
+  {
+    id: 3,
+    name: 'Product 3',
+    brand: 'Brand 3',
+    price: 300,
+    category: 'Category 3',
+    productStatus: 'Sem Estoque'
+  },
+  {
+    id: 4,
+    name: 'Product 4',
+    brand: 'Brand 4',
+    price: 400,
+    category: 'Category 4',
+    productStatus: 'Em Estoque'
+  },
+  {
+    id: 5,
+    name: 'Product 5',
+    brand: 'Brand 5',
+    price: 500,
+    category: 'Category 5',
+    productStatus: 'Sem Estoque'
+  }
+])
+
+const deleteDialog = () => {
+  confirm.require({
+    message: 'Do you want to delete this record?',
+    header: 'Danger Zone',
+    icon: 'pi pi-info-circle',
+    rejectLabel: 'Cancel',
+    rejectProps: {
+      label: 'Cancel',
+      severity: 'secondary',
+      outlined: true
+    },
+    acceptProps: {
+      label: 'Delete',
+      severity: 'danger'
+    },
+    accept: () => {
+      toast.add({ severity: 'info', summary: 'Confirmed', detail: 'Record deleted', life: 3000 })
+    },
+    reject: () => {
+      toast.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 })
+    }
+  })
 }
-const onRowCollapse = (event) => {
-  const index = expandedRows.value.findIndex((data) => data.id === event.data.id)
-  expandedRows.value.splice(index, 1)
-}
+
+const searchValue = ref('')
 </script>
 <template>
   <div class="product-container">
+    <div class="product-options">
+      <Button size="small" icon="pi pi-plus" label="Adicionar" @click="addVisibleDialog = true" />
+      <Dialog
+        v-model:visible="addVisibleDialog"
+        modal
+        header="Edit Profile"
+        :style="{ width: '25rem' }"
+      >
+        <span class="text-surface-500 dark:text-surface-400 block mb-8"
+          >Update your information.</span
+        >
+        <div class="flex items-center gap-4 mb-4">
+          <label for="username" class="font-semibold w-24">Username</label>
+          <InputText id="username" class="flex-auto" autocomplete="off" />
+        </div>
+        <div class="flex items-center gap-4 mb-8">
+          <label for="email" class="font-semibold w-24">Email</label>
+          <InputText id="email" class="flex-auto" autocomplete="off" />
+        </div>
+        <div class="flex justify-end gap-2">
+          <Button
+            type="button"
+            label="Cancel"
+            severity="secondary"
+            @click="addVisibleDialog = false"
+          ></Button>
+          <Button type="button" label="Save" @click="addVisibleDialog = false"></Button>
+        </div>
+      </Dialog>
+      <ConfirmDialog></ConfirmDialog>
+      <Button
+        @click="deleteDialog()"
+        size="small"
+        label="Deletar"
+        icon="pi pi-trash"
+        :disabled="!hasSelectedProducts"
+      />
+    </div>
+    <div class="product-header">
+      <p>Manage products</p>
+      <IconField>
+        <InputIcon class="pi pi-search" />
+        <InputText v-model="searchValue" placeholder="Search" />
+      </IconField>
+    </div>
     <DataTable
-      v-model:expandedRows="expandedRows"
+      v-model:selection="selectedProduct"
       :value="products"
-      paginator
-      showGridlines:rows="10"
       dataKey="id"
-      @rowExpand="onRowExpand"
-      @rowCollapse="onRowCollapse"
       tableStyle="min-width: 60rem"
     >
-      <template #header>
-        <div class="flex flex-wrap justify-end gap-2">
-          <Button text icon="pi pi-plus" label="Expand All" @click="expandAll" />
-          <Button text icon="pi pi-minus" label="Collapse All" @click="collapseAll" />
-        </div>
-      </template>
-      <Column expander style="width: 5rem" />
+      <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
+      <Column field="id" header="Code"></Column>
       <Column field="name" header="Name"></Column>
-      <Column header="Image">
-        <template #body="slotProps">
-          <img
-            :src="`https://primefaces.org/cdn/primevue/images/product/${slotProps.data.image}`"
-            :alt="slotProps.data.image"
-            class="shadow-lg"
-            width="64"
-          />
-        </template>
-      </Column>
-      <Column field="price" header="Price">
-        <template #body="slotProps">
-          {{ formatCurrency(slotProps.data.price) }}
-        </template>
-      </Column>
+      <Column field="brand" header="Brand"></Column>
+      <Column field="price" header="Price"></Column>
       <Column field="category" header="Category"></Column>
-      <Column header="Status">
-        <template #body="slotProps">
-          <Tag :value="slotProps.data.inventoryStatus" :severity="getSeverity(slotProps.data)" />
-        </template>
-      </Column>
-      <template #expansion="slotProps">
-        <div class="p-4">
-          <h5>Orders for {{ slotProps.data.name }}</h5>
-          <DataTable :value="slotProps.data.orders">
-            <Column field="id" header="Id" sortable></Column>
-            <Column field="customer" header="Customer" sortable></Column>
-            <Column field="date" header="Date" sortable></Column>
-            <Column field="amount" header="Amount" sortable>
-              <template #body="slotProps">
-                {{ formatCurrency(slotProps.data.amount) }}
-              </template>
-            </Column>
-            <Column field="status" header="Status" sortable>
-              <template #body="slotProps">
-                <Tag
-                  :value="slotProps.data.status.toLowerCase()"
-                  :severity="getOrderSeverity(slotProps.data)"
-                />
-              </template>
-            </Column>
-            <Column headerStyle="width:4rem">
-              <template #body>
-                <Button icon="pi pi-search" />
-              </template>
-            </Column>
-          </DataTable>
-        </div>
-      </template>
+      <Column field="productStatus" header="Status"></Column>
     </DataTable>
   </div>
 </template>
+
+<style scoped>
+.product-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2rem;
+  gap: 1rem;
+}
+
+.product-options {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  border: 1px solid #dedede;
+  border-radius: 5px;
+  min-width: 60rem;
+  padding: 1rem;
+  color: #2c2c2c;
+}
+
+.product-header {
+  min-width: 60rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #dedede;
+}
+</style>
