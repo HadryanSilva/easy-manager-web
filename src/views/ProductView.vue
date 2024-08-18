@@ -17,7 +17,7 @@ const products = ref([
     brand: 'Brand 1',
     price: 100,
     category: 'Category 1',
-    productStatus: 'Em Estoque'
+    inventoryStatus: 'INSTOCK'
   },
   {
     id: 2,
@@ -25,7 +25,7 @@ const products = ref([
     brand: 'Brand 2',
     price: 200,
     category: 'Category 2',
-    productStatus: 'Estoque Baixo'
+    inventoryStatus: 'LOWSTOCK'
   },
   {
     id: 3,
@@ -33,7 +33,7 @@ const products = ref([
     brand: 'Brand 3',
     price: 300,
     category: 'Category 3',
-    productStatus: 'Sem Estoque'
+    inventoryStatus: 'OUTOFSTOCK'
   },
   {
     id: 4,
@@ -41,7 +41,7 @@ const products = ref([
     brand: 'Brand 4',
     price: 400,
     category: 'Category 4',
-    productStatus: 'Em Estoque'
+    inventoryStatus: 'INSTOCK'
   },
   {
     id: 5,
@@ -49,7 +49,15 @@ const products = ref([
     brand: 'Brand 5',
     price: 500,
     category: 'Category 5',
-    productStatus: 'Sem Estoque'
+    inventoryStatus: 'OUTOFSTOCK'
+  },
+  {
+    id: 6,
+    name: 'Product 6',
+    brand: 'Brand 6',
+    price: 600,
+    category: 'Category 6',
+    inventoryStatus: 'INSTOCK'
   }
 ])
 
@@ -75,6 +83,22 @@ const deleteDialog = () => {
       toast.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 })
     }
   })
+}
+
+const getSeverity = (product) => {
+  switch (product.inventoryStatus) {
+    case 'INSTOCK':
+      return 'success'
+
+    case 'LOWSTOCK':
+      return 'warn'
+
+    case 'OUTOFSTOCK':
+      return 'danger'
+
+    default:
+      return null
+  }
 }
 
 const searchValue = ref('')
@@ -130,6 +154,9 @@ const searchValue = ref('')
       v-model:selection="selectedProduct"
       :value="products"
       dataKey="id"
+      paginator
+      :rows="5"
+      :rowsPerPageOptions="[5, 10, 20, 50]"
       tableStyle="min-width: 60rem"
     >
       <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
@@ -138,7 +165,11 @@ const searchValue = ref('')
       <Column field="brand" header="Brand"></Column>
       <Column field="price" header="Price"></Column>
       <Column field="category" header="Category"></Column>
-      <Column field="productStatus" header="Status"></Column>
+      <Column header="Status">
+        <template #body="slotProps">
+          <Tag :value="slotProps.data.inventoryStatus" :severity="getSeverity(slotProps.data)" />
+        </template>
+      </Column>
     </DataTable>
   </div>
 </template>
