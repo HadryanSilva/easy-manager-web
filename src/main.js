@@ -7,6 +7,7 @@ import { useAuthStore } from './stores/auth'
 import PrimeVue from 'primevue/config'
 import Aura from '@primevue/themes/aura'
 import ToastService from 'primevue/toastservice'
+import ConfirmationService from 'primevue/confirmationservice'
 
 import App from './App.vue'
 import router from './router'
@@ -17,18 +18,13 @@ app.use(createPinia())
 
 app.use(PrimeVue, {
   theme: {
-    preset: Aura,
-    options: {
-      prefix: 'p',
-      darkModeSelector: 'system',
-      cssLayer: false
-    }
+    preset: Aura
   }
 })
-
 const authStore = useAuthStore()
 authStore.checkAuth()
 
+app.use(ConfirmationService)
 app.use(ToastService)
 app.use(router)
 app.mount('#app')

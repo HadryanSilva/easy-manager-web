@@ -1,15 +1,29 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useToast } from 'primevue/usetoast'
+import { useConfirm } from 'primevue/useconfirm'
+import productService from '@/services/productService'
 
 const addVisibleDialog = ref(false)
 const selectedProduct = ref(null)
+const loadingProducts = ref(false)
+const searchValue = ref('')
+
+const categories = ref(['Category 1', 'Category 2', 'Category 3', 'Category 4'])
+const product = ref({
+  name: '',
+  brand: '',
+  price: null,
+  category: null,
+  inventoryStatus: 'Sem estoque'
+})
 
 const hasSelectedProducts = computed(() => {
   return selectedProduct.value && selectedProduct.value.length > 0
 })
 
 const toast = useToast()
+const confirm = useConfirm()
 const products = ref([
   {
     id: 1,
@@ -17,7 +31,7 @@ const products = ref([
     brand: 'Brand 1',
     price: 100,
     category: 'Category 1',
-    inventoryStatus: 'INSTOCK'
+    inventoryStatus: 'Em Estoque'
   },
   {
     id: 2,
@@ -25,7 +39,7 @@ const products = ref([
     brand: 'Brand 2',
     price: 200,
     category: 'Category 2',
-    inventoryStatus: 'LOWSTOCK'
+    inventoryStatus: 'Estoque Baixo'
   },
   {
     id: 3,
@@ -33,7 +47,7 @@ const products = ref([
     brand: 'Brand 3',
     price: 300,
     category: 'Category 3',
-    inventoryStatus: 'OUTOFSTOCK'
+    inventoryStatus: 'Sem Estoque'
   },
   {
     id: 4,
@@ -41,7 +55,7 @@ const products = ref([
     brand: 'Brand 4',
     price: 400,
     category: 'Category 4',
-    inventoryStatus: 'INSTOCK'
+    inventoryStatus: 'Em Estoque'
   },
   {
     id: 5,
@@ -49,7 +63,7 @@ const products = ref([
     brand: 'Brand 5',
     price: 500,
     category: 'Category 5',
-    inventoryStatus: 'OUTOFSTOCK'
+    inventoryStatus: 'Sem Estoque'
   },
   {
     id: 6,
@@ -57,51 +71,102 @@ const products = ref([
     brand: 'Brand 6',
     price: 600,
     category: 'Category 6',
-    inventoryStatus: 'INSTOCK'
+    inventoryStatus: 'Em Estoque'
   }
 ])
 
-const deleteDialog = () => {
+const getSeverity = (product) => {
+  switch (product.inventoryStatus) {
+    case 'Em Estoque':
+      return 'success'
+
+    case 'Estoque Baixo':
+      return 'warn'
+
+    case 'Sem Estoque':
+      return 'danger'
+
+    default:
+      return 'Sem Estoque'
+  }
+}
+
+onMounted(() => {
+  loadingProducts.value = true
+  productService
+    .getProducts()
+    .then((data) => {
+      products.value = data
+      loadingProducts.value = false
+    })
+    .catch(() => {
+      toast.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Error loading products',
+        life: 3000
+      })
+      loadingProducts.value = false
+    })
+})
+
+const deleteProduct = (id) => {
   confirm.require({
-    message: 'Do you want to delete this record?',
+    message: 'você deseja deletar este produto?',
     header: 'Danger Zone',
     icon: 'pi pi-info-circle',
-    rejectLabel: 'Cancel',
+    rejectLabel: 'Cancelar',
     rejectProps: {
-      label: 'Cancel',
+      label: 'Cancelar',
       severity: 'secondary',
       outlined: true
     },
     acceptProps: {
-      label: 'Delete',
+      label: 'Deletar',
       severity: 'danger'
     },
     accept: () => {
-      toast.add({ severity: 'info', summary: 'Confirmed', detail: 'Record deleted', life: 3000 })
+      const index = products.value.findIndex((product) => product.id === id)
+      products.value.splice(index, 1)
+      toast.add({
+        severity: 'success',
+        summary: 'Sucesso',
+        detail: 'Produto deletado',
+        life: 3000
+      })
     },
     reject: () => {
-      toast.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 })
+      toast.add({
+        severity: 'info',
+        summary: 'Info',
+        detail: 'Cancelado',
+        life: 3000
+      })
     }
   })
 }
 
-const getSeverity = (product) => {
-  switch (product.inventoryStatus) {
-    case 'INSTOCK':
-      return 'success'
-
-    case 'LOWSTOCK':
-      return 'warn'
-
-    case 'OUTOFSTOCK':
-      return 'danger'
-
-    default:
-      return null
-  }
+const saveProduct = () => {
+  products.value.push = productService
+    .createProduct(product.value)
+    .then(() => {
+      toast.add({
+        severity: 'success',
+        summary: 'Sucesso',
+        detail: 'Produto cadastrado com sucesso',
+        life: 3000
+      })
+    })
+    .catch(() => {
+      toast.add({
+        severity: 'error',
+        summary: 'Erro ao salvar produto',
+        detail: 'Verifique os logs para mais informações',
+        life: 3000
+      })
+    })
+  addVisibleDialog.value = false
 }
-
-const searchValue = ref('')
 </script>
 <template>
   <div class="product-container">
@@ -110,38 +175,53 @@ const searchValue = ref('')
       <Dialog
         v-model:visible="addVisibleDialog"
         modal
-        header="Edit Profile"
+        header="Cadastrar Produto"
         :style="{ width: '25rem' }"
       >
         <span class="text-surface-500 dark:text-surface-400 block mb-8"
-          >Update your information.</span
+          >Adicione os dados do produto.</span
         >
-        <div class="flex items-center gap-4 mb-4">
-          <label for="username" class="font-semibold w-24">Username</label>
-          <InputText id="username" class="flex-auto" autocomplete="off" />
+        <div class="dialog-form">
+          <div class="p-field">
+            <label for="name">Nome</label>
+            <InputText id="name" v-model="product.name" />
+          </div>
+          <div class="p-field">
+            <label for="brand">Marca</label>
+            <InputText id="brand" v-model="product.brand" />
+          </div>
+          <div class="p-field">
+            <label for="price">Preço</label>
+            <InputNumber id="price" v-model="product.price" mode="currency" currency="BRL" />
+          </div>
+          <div class="p-field">
+            <label for="category">Categoria</label>
+            <Select
+              v-model="product.category"
+              :options="categories"
+              placeholder="Escolha a Categoria"
+              checkmark
+            />
+          </div>
         </div>
-        <div class="flex items-center gap-4 mb-8">
-          <label for="email" class="font-semibold w-24">Email</label>
-          <InputText id="email" class="flex-auto" autocomplete="off" />
-        </div>
-        <div class="flex justify-end gap-2">
+        <div class="dialog-footer">
           <Button
             type="button"
             label="Cancel"
             severity="secondary"
             @click="addVisibleDialog = false"
           ></Button>
-          <Button type="button" label="Save" @click="addVisibleDialog = false"></Button>
+          <Button type="button" label="Save" @click="saveProduct()"></Button>
         </div>
       </Dialog>
       <ConfirmDialog></ConfirmDialog>
       <Button
-        @click="deleteDialog()"
+        @click="deleteProduct(selectedProduct)"
         size="small"
         label="Deletar"
         icon="pi pi-trash"
         :disabled="!hasSelectedProducts"
-      />
+      ></Button>
     </div>
     <div class="product-header">
       <p>Manage products</p>
@@ -152,6 +232,9 @@ const searchValue = ref('')
     </div>
     <DataTable
       v-model:selection="selectedProduct"
+      :lazy="true"
+      :totalRecords="products.length"
+      :loading="loadingProducts"
       :value="products"
       dataKey="id"
       paginator
@@ -160,11 +243,11 @@ const searchValue = ref('')
       tableStyle="min-width: 60rem"
     >
       <Column selectionMode="multiple" headerStyle="width: 3rem"></Column>
-      <Column field="id" header="Code"></Column>
-      <Column field="name" header="Name"></Column>
-      <Column field="brand" header="Brand"></Column>
-      <Column field="price" header="Price"></Column>
-      <Column field="category" header="Category"></Column>
+      <Column field="id" header="Id"></Column>
+      <Column field="name" header="Nome"></Column>
+      <Column field="brand" header="Marca"></Column>
+      <Column field="price" header="Preço"></Column>
+      <Column field="category" header="Categoria"></Column>
       <Column header="Status">
         <template #body="slotProps">
           <Tag :value="slotProps.data.inventoryStatus" :severity="getSeverity(slotProps.data)" />
@@ -203,5 +286,26 @@ const searchValue = ref('')
   font-size: 1rem;
   font-weight: bold;
   color: #dedede;
+}
+
+.dialog-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.p-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding-top: 2rem;
 }
 </style>

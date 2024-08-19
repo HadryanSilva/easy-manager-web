@@ -4,14 +4,20 @@ import http from '@/services/http'
 
 const API_URL = 'http://localhost:8080/api/v1'
 const token = localStorage.getItem('token')
-const config = {
-  headers: { Authorization: `Bearer ${token}` }
-}
 
 export default {
-  async getProducts(page, size) {
+  async getProducts() {
+    console.log(token)
     try {
-      const response = await http.get(`${API_URL}/products?page=${page}&size=${size}`, {}, config)
+      const response = await http.get(`${API_URL}/products`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        params: {
+          page: 0,
+          size: 5
+        }
+      })
       return response.data
     } catch (error) {
       console.error('Error fetching products:', error)
@@ -21,7 +27,9 @@ export default {
 
   async getProductById(id) {
     try {
-      const response = await http.get(`${API_URL}/products/${id}`, {}, config)
+      const response = await http.get(`${API_URL}/products/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
       return response.data
     } catch (error) {
       console.error(`Error fetching product with id ${id}:`, error)
@@ -31,7 +39,9 @@ export default {
 
   async createProduct(productData) {
     try {
-      const response = await http.post(`${API_URL}/products`, productData, config)
+      const response = await http.post(`${API_URL}/products`, productData, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
       return response.data
     } catch (error) {
       console.error('Error creating product:', error)
@@ -41,7 +51,9 @@ export default {
 
   async editProduct(id, productData) {
     try {
-      const response = await http.put(`${API_URL}/products/${id}`, productData, config)
+      const response = await http.put(`${API_URL}/products/${id}`, productData, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
       return response.data
     } catch (error) {
       console.error(`Error editing product with id ${id}:`, error)
@@ -51,7 +63,13 @@ export default {
 
   async deleteProduct(id) {
     try {
-      const response = await http.delete(`${API_URL}/products/${id}`, {}, config)
+      const response = await http.delete(
+        `${API_URL}/products/${id}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      )
       return response.data
     } catch (error) {
       console.error(`Error deleting product with id ${id}:`, error)

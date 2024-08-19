@@ -5,6 +5,11 @@
   margin: 0;
 }
 
+html,
+body {
+  font-family: 'Montserrat', sans-serif;
+}
+
 #app {
   font-weight: normal;
   font-family: 'Montserrat', sans-serif;
