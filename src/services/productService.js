@@ -1,9 +1,11 @@
 // userService.js
 
 import http from '@/services/http'
+import { useAuthStore } from '@/stores/auth'
 
 const API_URL = 'http://localhost:8080/api/v1'
-const token = localStorage.getItem('token')
+const authStore = useAuthStore()
+const token = authStore.getToken
 
 export default {
   async getProducts() {
@@ -39,6 +41,8 @@ export default {
 
   async createProduct(productData) {
     try {
+      productData.stockStatus = 'Sem Estoque'
+      console.log('Dados do produto: ', productData)
       const response = await http.post(`${API_URL}/products`, productData, {
         headers: { Authorization: `Bearer ${token}` }
       })

@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import http from '@/services/http'
+import router from '@/router'
 
 export const useAuthStore = defineStore('auth', {
   state: () => {
@@ -97,7 +98,8 @@ export const useAuthStore = defineStore('auth', {
       try {
         const token = localStorage.getItem('token')
         if (!token) {
-          throw new Error('No token found')
+          this.logout()
+          router.push('/login')
         }
         this.user = JSON.parse(localStorage.getItem('user'))
         this.token = token

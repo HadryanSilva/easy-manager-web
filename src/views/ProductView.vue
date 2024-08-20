@@ -8,75 +8,19 @@ const addVisibleDialog = ref(false)
 const selectedProduct = ref(null)
 const loadingProducts = ref(false)
 const searchValue = ref('')
+const toast = useToast()
+const confirm = useConfirm()
+const products = ref([])
 
 const categories = ref(['Category 1', 'Category 2', 'Category 3', 'Category 4'])
-const product = ref({
-  name: '',
-  brand: '',
-  price: null,
-  category: null,
-  inventoryStatus: 'Sem estoque'
-})
+const product = ref({})
 
 const hasSelectedProducts = computed(() => {
   return selectedProduct.value && selectedProduct.value.length > 0
 })
 
-const toast = useToast()
-const confirm = useConfirm()
-const products = ref([
-  {
-    id: 1,
-    name: 'Product 1',
-    brand: 'Brand 1',
-    price: 100,
-    category: 'Category 1',
-    inventoryStatus: 'Em Estoque'
-  },
-  {
-    id: 2,
-    name: 'Product 2',
-    brand: 'Brand 2',
-    price: 200,
-    category: 'Category 2',
-    inventoryStatus: 'Estoque Baixo'
-  },
-  {
-    id: 3,
-    name: 'Product 3',
-    brand: 'Brand 3',
-    price: 300,
-    category: 'Category 3',
-    inventoryStatus: 'Sem Estoque'
-  },
-  {
-    id: 4,
-    name: 'Product 4',
-    brand: 'Brand 4',
-    price: 400,
-    category: 'Category 4',
-    inventoryStatus: 'Em Estoque'
-  },
-  {
-    id: 5,
-    name: 'Product 5',
-    brand: 'Brand 5',
-    price: 500,
-    category: 'Category 5',
-    inventoryStatus: 'Sem Estoque'
-  },
-  {
-    id: 6,
-    name: 'Product 6',
-    brand: 'Brand 6',
-    price: 600,
-    category: 'Category 6',
-    inventoryStatus: 'Em Estoque'
-  }
-])
-
 const getSeverity = (product) => {
-  switch (product.inventoryStatus) {
+  switch (product.stockStatus) {
     case 'Em Estoque':
       return 'success'
 
@@ -156,6 +100,7 @@ const saveProduct = () => {
         detail: 'Produto cadastrado com sucesso',
         life: 3000
       })
+      products.value.push(product.value)
     })
     .catch(() => {
       toast.add({
@@ -250,7 +195,7 @@ const saveProduct = () => {
       <Column field="category" header="Categoria"></Column>
       <Column header="Status">
         <template #body="slotProps">
-          <Tag :value="slotProps.data.inventoryStatus" :severity="getSeverity(slotProps.data)" />
+          <Tag :value="slotProps.data.stockStatus" :severity="getSeverity(slotProps.data)" />
         </template>
       </Column>
     </DataTable>
